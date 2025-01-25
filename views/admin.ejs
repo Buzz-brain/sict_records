@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> SICT Admin Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            width: 40%;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-bottom: 40px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 90%;
+            height: 20px;
+            margin-bottom: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        #students-container,
+        #staff-container {
+            margin-top: 40px;
+            width: 90%;
+        }
+
+        .student,
+        .staff {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .student:last-child,
+        .staff:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1 style="text-align: center;">SICT Admin Dashboard</h1>
+        <div style="display:flex; justify-content: space-around;">
+
+            <div class="container">
+                <form id="preregister-student-form">
+                    <h2>Preregister Student</h2>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" required><br><br>
+                    <label for="regNo">Registration Number:</label>
+                    <input type="text" id="regNo" required><br><br>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required><br><br>
+                    <button id="preregister-student-btn">Preregister Student</button>
+                </form>
+            </div>
+
+            <div class="container">
+                <form id="preregister-staff-form">
+                    <h2>Preregister Staff</h2>
+                    <label for="staff-name">Name:</label>
+                    <input type="text" id="staff-name" required><br><br>
+                    <label for="staff-id">Staff ID:</label>
+                    <input type="text" id="staff-id" required><br><br>
+                    <label for="staff-password">Password:</label>
+                    <input type="password" id="staff-password" required><br><br>
+                    <button id="preregister-staff-btn">Preregister Staff</button>
+                </form>
+            </div>
+        </div>
+        <div style="width: 100%; display: flex; justify-content: space-around; align-items: center; margin-top: 50px;">
+            <button id="get-students-btn">Get All Students</button>
+            <button id="get-staff-btn">Get All Staff</button>
+        </div>
+        <div style="width: 100%; display: flex; justify-content: space-around; align-items: center;">
+            <div id="students-container"></div>
+            <div id="staff-container"></div>
+        </div>
+        
+    </div>
+    <script>
+        const preregisterStudentForm = document.getElementById('preregister-student-form');
+        const preregisterStaffForm = document.getElementById('preregister-staff-form');
+        const getStudentsBtn = document.getElementById('get-students-btn');
+        const getStaffBtn = document.getElementById('get-staff-btn');
+        const studentsContainer = document.getElementById('students-container');
+        const staffContainer = document.getElementById('staff-container');
+
+        preregisterStudentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const regNo = document.getElementById('regNo').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/admin/preregister', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, regNo, password })
+                });
+
+                const data = await response.json();
+                console.log(data);
+                alert('Student preregistered successfully!');
+            } catch (error) {
+                console.error(error);
+                alert('Error preregistering student!');
+            }
+        });
+
+        preregisterStaffForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('staff-name').value;
+            const staffId = document.getElementById('staff-id').value;
+            const password = document.getElementById('staff-password').value;
+
+            try {
+                const response = await fetch('/api/admin/preregister/staff', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, staffId, password })
+                });
+
+                const data = await response.json();
+                console.log(data);
+                alert('Staff preregistered successfully!');
+            } catch (error) {
+                console.error(error);
+                alert('Error preregistering staff!');
+            }
+
+        });
+
+        getStudentsBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/admin/students');
+                const data = await response.json();
+                console.log(data);
+                studentsContainer.innerHTML = '';
+                data.forEach((student) => {
+                    const studentHTML = `<div class="student"> <h2>${student.name}</h2> <p>Registration Number: ${student.regNo}</p> </div>`;
+                    studentsContainer.insertAdjacentHTML('beforeend', studentHTML);
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Error fetching students!');
+            }
+        });
+
+        getStaffBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/admin/staffs');
+                const data = await response.json();
+                console.log(data);
+                staffContainer.innerHTML = '';
+                data.forEach((staff) => {
+                    const staffHTML = `<div class="staff"> <h2>${staff.name}</h2> <p>Staff ID: ${staff.staffId}</p> </div>`;
+                    staffContainer.insertAdjacentHTML('beforeend', staffHTML);
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Error fetching staff!');
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>

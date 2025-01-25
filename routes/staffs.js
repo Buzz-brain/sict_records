@@ -43,7 +43,7 @@ router.patch('/staff-profile', verifyToken, async (req, res) => {
 router.get('/staff-medical-details', verifyToken, async (req, res) => {
   try {
     const staff = await Staff.findById(req.user._id).populate('staffMedicalDetails');
-    res.send(staff.staffMedicalDetails);
+    res.send(staff);
   } catch (err) {
     res.status(500).send({ message: 'Error fetching staff medical details' });
   }

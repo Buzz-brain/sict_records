@@ -37,8 +37,17 @@ app.get('/medical', (req, res) => {
 app.get('/profile', (req, res) => {
   res.render('profile');
 });
-app.get('/profile', (req, res) => {
-  res.render('profile');
+app.get('/staffProfile', (req, res) => {
+  res.render('staffProfile');
+});
+app.get('/staffMedical', (req, res) => {
+  res.render('staffMedical');
+});
+app.get('/staffLogin', (req, res) => {
+  res.render('staffLogin');
+});
+app.get('/admin', (req, res) => {
+  res.render('admin');
 });
 
 // Start the server

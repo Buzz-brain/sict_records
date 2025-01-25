@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Page</title>
+  <title>Staff Login Page</title>
   <link rel="stylesheet" href="styles.css">
   <style>
     .alert-box {
@@ -23,12 +23,12 @@
   <div class="login-container">
     <div class="login-box">
       <h1>Welcome Back</h1>
-      <p>Please sign in to your account as a student</p>
+      <p>Please sign in to your account as a staff</p>
       <div class="alert-box" id="alert-box"></div>
 
       <form id="loginForm">
-        <label for="regNo">Reg. Number</label>
-        <input type="regNo" id="regNo" name="regNo" placeholder="Enter your reg number" required>
+        <label for="staffId">Staff Id</label>
+        <input type="text" id="staffId" name="staffId" placeholder="Enter your staff id" required>
         <label for="password">Password</label>
         <input type="password" id="password" name="password" placeholder="Enter your password" required>
         <button type="submit" class="sign-in-btn">Sign In</button>
@@ -42,15 +42,15 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const regNo = document.getElementById('regNo').value;
+            const staffId = document.getElementById('staffId').value;
             const password = document.getElementById('password').value;
 
-            const response = await fetch('/api/auth/student/login', {
+            const response = await fetch('/api/auth/staff/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ regNo, password })
+                body: JSON.stringify({ staffId, password })
             });
 
             const data = await response.json();
@@ -62,7 +62,7 @@
                 alertBox.style.color = 'white';
                 alertBox.innerHTML = 'Login successful!';
                 setTimeout(() => {
-                    window.location.href = '/profile';
+                    window.location.href = '/staffProfile';
                 }, 2000);
             } else {
                 alertBox.style.display = 'block';
@@ -71,8 +71,6 @@
                 alertBox.innerHTML = data.message;
             }
         });
-
-
   </script>
 
 </body>

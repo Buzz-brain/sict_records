@@ -12,13 +12,13 @@
   <div class="container">
     <aside class="sidebar">
       <div class="profile">
-        <!-- <div class="profile-picture"></div> -->
+        <div class="profile-picture"></div>
         <p id="name"></p>
       </div>
       <nav class="sidebar-menu">
         <ul>
-          <li class="active"><a href="/profile">Personal Information</a></li>
-          <li><a href="/medical">Medical Records</a></li>
+          <li class="active"><a href="/staffProfile">Personal Information</a></li>
+          <li><a href="/staffMedical">Medical Records</a></li>
         </ul>
       </nav>
     </aside>
@@ -29,8 +29,8 @@
       </div>
       <form class="form" id="profile-form">
         <div class="form-row">
-          <label>Registration Number</label>
-          <input type="text" id="regNo" disabled>
+          <label>Staff Id</label>
+          <input type="text" id="staffId" disabled>
         </div>
         <div class="form-row">
           <label>Date of Birth</label>
@@ -55,6 +55,14 @@
         <div class="form-row">
           <label>Address</label>
           <input type="text" id="address" disabled>
+        </div>
+        <div class="form-row">
+          <label>Profession</label>
+          <input type="text" id="profession" disabled>
+        </div>
+        <div class="form-row">
+          <label>Degree</label>
+          <input type="text" id="degree" disabled>
         </div>
         <!-- <div class="form-row">
           <label>Profile Photo</label>
@@ -83,17 +91,19 @@
 
     const updateProfile = async () => {
       try {
-        const regNo = document.getElementById('regNo').value;
+        const staffId = document.getElementById('staffId').value;
         const dateOfBirth = document.getElementById('dateOfBirth').value;
         const email = document.getElementById('email').value;
         const gender = document.getElementById('gender').value;
         const nationality = document.getElementById('nationality').value;
         const phoneNumber = document.getElementById('phoneNumber').value;
         const address = document.getElementById('address').value;
+        const degree = document.getElementById('degree').value;
+        const profession = document.getElementById('profession').value;
 
         const token = localStorage.getItem('token');
 
-        const response = await fetch('/api/students/profile', {
+        const response = await fetch('/api/staffs/staff-profile', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -106,6 +116,8 @@
             nationality,
             phoneNumber,
             address,
+            degree,
+            profession,
           })
         });
 
@@ -128,7 +140,7 @@
       try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch('/api/students/profile', {
+        const response = await fetch('/api/staffs/staff-profile', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -141,13 +153,15 @@
         if (response.ok) {
           console.log(data);
           document.getElementById('name').textContent = data.name;
-          document.getElementById('regNo').value = data.regNo;
-          document.getElementById('dateOfBirth').value = data.profile.dateOfBirth ? (data.profile.dateOfBirth.includes('T') ? data.profile.dateOfBirth.split('T')[0] : data.profile.dateOfBirth) : '';
-          document.getElementById('email').value = data.profile.email;
-          document.getElementById('gender').value = data.profile.gender;
-          document.getElementById('nationality').value = data.profile.nationality;
-          document.getElementById('phoneNumber').value = data.profile.phoneNumber;
-          document.getElementById('address').value = data.profile.address;
+          document.getElementById('staffId').value = data.staffId;
+          document.getElementById('dateOfBirth').value = data.staffProfile.dateOfBirth ? (data.staffProfile.dateOfBirth.includes('T') ? data.staffProfile.dateOfBirth.split('T')[0] : data.staffProfile.dateOfBirth) : '';
+          document.getElementById('email').value = data.staffProfile.email;
+          document.getElementById('gender').value = data.staffProfile.gender;
+          document.getElementById('nationality').value = data.staffProfile.nationality;
+          document.getElementById('phoneNumber').value = data.staffProfile.phoneNumber;
+          document.getElementById('address').value = data.staffProfile.address;
+          document.getElementById('degree').value = data.staffProfile.degree;
+          document.getElementById('profession').value = data.staffProfile.profession;
         } else {
           console.error(data);
         }
