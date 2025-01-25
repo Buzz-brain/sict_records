@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Records</title>
+  <link rel="stylesheet" href="medical.css">
+</head>
+
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="profile">
+        <div class="profile-picture"></div>
+        <p id="name"></p>
+      </div>
+      <nav class="sidebar-menu">
+        <ul>
+          <li><a href="/profile">Personal Information</a></li>
+          <li class="active"><a href="/medical">Medical Records</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <div class="header">
+        <h1>Medical Records</h1>
+        <button class="btn-edit" id="edit-btn">Edit Medical Records</button>
+      </div>
+      <div class="section">
+        <div style="display: flex; justify-content: space-between;">
+          <div class="section">
+            <h2>Emergency Contacts</h2>
+            <form id="emergency-contacts-form">
+              <div class="form-row">
+                <label>Primary Contact Name</label>
+                <input type="text" id="primary-contact-name" disabled>
+              </div>
+              <div class="form-row">
+                <label>Primary Contact Relationship</label>
+                <input type="text" id="primary-contact-relationship" disabled>
+              </div>
+              <div class="form-row">
+                <label>Primary Contact Phone Number</label>
+                <input type="tel" id="primary-contact-phone-number" disabled>
+              </div>
+              <div class="form-row">
+                <label>Secondary Contact Name</label>
+                <input type="text" id="secondary-contact-name" disabled>
+              </div>
+              <div class="form-row">
+                <label>Secondary Contact Relationship</label>
+                <input type="text" id="secondary-contact-relationship" disabled>
+              </div>
+              <div class="form-row">
+                <label>Secondary Contact Phone Number</label>
+                <input type="tel" id="secondary-contact-phone-number" disabled>
+              </div>
+            </form>
+          </div>
+          <div class="section">
+            <h2>Medical Notes & Recommendations</h2>
+            <form id="medical-notes-form">
+              <div class="form-row">
+                <label>Allergies</label>
+                <input type="text" id="allergies" disabled>
+              </div>
+              <div class="form-row">
+                <label>Medical Condition</label>
+                <input type="text" id="medical-condition" disabled>
+              </div>
+              <div class="form-row">
+                <label>Medical History</label>
+                <input type="text" id="medical-history" disabled>
+              </div>
+              <div class="form-row">
+                <label>Medications</label>
+                <input type="text" id="medications" disabled>
+              </div>
+            </form>
+          </div>
+        </div>
+    </main>
+  </div>
+
+  <script>
+    const getMedicalRecords = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/students/medical-details', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log(data);
+
+          // Emergency Contacts
+          document.getElementById('name').textContent = data.name;
+          document.getElementById('primary-contact-name').value = data.medicalDetails.contactDetails.primaryContact.name;
+          document.getElementById('primary-contact-relationship').value = data.medicalDetails.contactDetails.primaryContact.relationship;
+          document.getElementById('primary-contact-phone-number').value = data.medicalDetails.contactDetails.primaryContact.phoneNumber;
+          document.getElementById('secondary-contact-name').value = data.medicalDetails.contactDetails.secondaryContact.name;
+          document.getElementById('secondary-contact-relationship').value = data.medicalDetails.contactDetails.secondaryContact.relationship;
+          document.getElementById('secondary-contact-phone-number').value = data.medicalDetails.contactDetails.secondaryContact.phoneNumber;
+
+          // Medical Notes & Recommendations
+          document.getElementById('allergies').value = data.medicalDetails.allergies;
+          document.getElementById('medical-condition').value = data.medicalDetails.medicalCondition;
+          document.getElementById('medical-history').value = data.medicalDetails.medicalHistory;
+          document.getElementById('medications').value = data.medicalDetails.medications;
+        } else {
+          console.error(data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const updateMedicalRecords = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/students/medical-details', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            contactDetails: {
+              primaryContact: {
+                name: document.getElementById('primary-contact-name').value,
+                relationship: document.getElementById('primary-contact-relationship').value,
+                phoneNumber: document.getElementById('primary-contact-phone-number').value
+              },
+              secondaryContact: {
+                name: document.getElementById('secondary-contact-name').value,
+                relationship: document.getElementById('secondary-contact-relationship').value,
+                phoneNumber: document.getElementById('secondary-contact-phone-number').value
+              }
+            },
+            allergies: document.getElementById('allergies').value,
+            medicalCondition: document.getElementById('medical-condition').value,
+            medicalHistory: document.getElementById('medical-history').value,
+            medications: document.getElementById('medications').value
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log(data);
+        } else {
+          console.error(data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const editBtn = document.getElementById('edit-btn');
+    let isEditing = false;
+
+    editBtn.addEventListener('click', () => {
+      if (!isEditing) {
+        document.querySelectorAll('input').forEach(input => input.disabled = false);
+        editBtn.textContent = 'Save Changes';
+        isEditing = true;
+      } else {
+        updateMedicalRecords();
+        document.querySelectorAll('input').forEach(input => input.disabled = true);
+        editBtn.textContent = 'Edit Medical Records';
+        isEditing = false;
+      }
+    });
+
+    getMedicalRecords();
+  </script>
+
+</body>
+
+</html>
