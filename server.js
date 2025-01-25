@@ -26,10 +26,10 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
-  res.render('index');
-});
-app.get('/home', (req, res) => {
   res.render('home');
+});
+app.get('/login', (req, res) => {
+  res.render('login');
 });
 app.get('/medical', (req, res) => {
   res.render('medical');
